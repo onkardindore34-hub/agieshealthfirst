@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Agieshealthfirst | Team Workspace</title>
   
+  <!-- Suppress CDN banner warning in console -->
+  <script>
+    (function() {
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -34,8 +45,8 @@
         <div>
           <h1 class="text-base font-bold text-slate-900 leading-tight">Agieshealthfirst</h1>
           <div class="flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="sync-status" class="text-[11px] text-slate-500 font-medium">Live Google Sheets Sync</span>
+            <span id="pulse-dot" class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="sync-status" class="text-[11px] text-slate-500 font-medium">Syncing Google Sheets...</span>
           </div>
         </div>
       </div>
@@ -56,15 +67,15 @@
         </button>
       </nav>
 
-      <!-- Member Selector & Sync Button -->
+      <!-- Active User / Partner Name -->
       <div class="flex items-center gap-2">
-        <button onclick="fetchAllData(true)" title="Force Refresh" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition cursor-pointer">
+        <button onclick="fetchAllData(true)" title="Force Refresh Now" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition cursor-pointer">
           <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
         </button>
         <div class="bg-slate-100 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs">
           <span class="w-2 h-2 rounded-full bg-teal-600"></span>
-          <span class="text-slate-500 font-medium">Active Member:</span>
-          <input type="text" id="current-user-input" value="Sumedh" onchange="updateActiveUser()" title="Change your display name"
+          <span class="text-slate-500 font-medium">User:</span>
+          <input type="text" id="current-user-input" value="Sumedh" onchange="updateActiveUser()" title="Click to edit your display name"
             class="font-bold text-slate-800 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-teal-500 focus:outline-none w-24">
         </div>
       </div>
@@ -94,9 +105,354 @@
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs"><span class="text-[11px] font-semibold uppercase text-rose-500">High Priority</span><p id="count-high" class="text-2xl font-bold text-rose-600 mt-1">0</p></div>
       </div>
 
-      <!-- Checklist List View -->
+      <!-- Checklist Items -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
         <div class="p-3 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-2 items-center justify-between">
           <div class="flex items-center gap-2">
             <button onclick="filterTasks('all')" class="task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-teal-700 shadow-2xs">All</button>
-            <button onclick="filterTasks('Pending')" class="task-filter-btn px-3 py-1 rounded-lg text-xs
+            <button onclick="filterTasks('Pending')" class="task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Pending</button>
+            <button onclick="filterTasks('Done')" class="task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Completed</button>
+          </div>
+          <span class="text-[11px] text-slate-400">Auto-syncs across partner screens</span>
+        </div>
+        <div id="tasks-list" class="divide-y divide-slate-100">
+          <div class="p-8 text-center text-slate-400 text-sm">Loading tasks from Google Sheet...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: CALENDAR -->
+    <section id="tab-calendar" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Integrated Calendar</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Coordinate deadlines, clinical reviews, and meetings</p>
+        </div>
+        <button onclick="openModal('calendar-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
+          <i data-lucide="calendar-plus" class="w-4 h-4"></i> Schedule Event
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Upcoming Events</h3>
+          <div id="events-list" class="space-y-3 custom-scrollbar max-h-[500px] overflow-y-auto">
+            <div class="p-6 text-center text-slate-400 text-xs">No scheduled events found.</div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
+          <div class="flex items-center justify-between mb-4">
+            <h3 id="current-month-label" class="font-bold text-slate-800 text-base">Calendar</h3>
+            <div class="flex items-center gap-2">
+              <button onclick="changeMonth(-1)" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+              <button onclick="changeMonth(1)" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center font-semibold text-[11px] text-slate-400 mb-2">
+            <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+          </div>
+          <div id="calendar-days-grid" class="grid grid-cols-7 gap-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MOM SHEETS -->
+    <section id="tab-mom" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Minutes of Meeting (MOM)</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Formal corporate meeting sheets with headers and footers</p>
+        </div>
+        <button onclick="openModal('mom-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
+          <i data-lucide="file-plus" class="w-4 h-4"></i> New MOM Document
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="mom-cards-grid">
+        <div class="col-span-full p-8 text-center text-slate-400 text-sm">Loading MOM sheets...</div>
+      </div>
+    </section>
+
+    <!-- TAB 4: COMPANY NOTEPAD -->
+    <section id="tab-notepad" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Agieshealthfirst Company Notepad</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Shared scratchpad for protocols, updates, and draft ideas</p>
+        </div>
+        <button onclick="saveNotepadContent()" id="notepad-save-btn" class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
+          <i data-lucide="save" class="w-4 h-4"></i> Save to Cloud Sheet
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <input type="text" id="note-title" placeholder="Note Title..." class="text-lg font-bold text-slate-800 focus:outline-none w-full" value="General Clinical & Operations Board">
+          <span id="note-last-updated" class="text-[11px] text-slate-400 whitespace-nowrap pl-2">Syncing...</span>
+        </div>
+        <textarea id="note-content" rows="16" placeholder="Write shared protocols, meeting summaries, or partner notes here..."
+          class="w-full text-sm text-slate-700 border-0 focus:ring-0 focus:outline-none resize-none leading-relaxed font-mono custom-scrollbar"></textarea>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE NAVIGATION ==================== -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex items-center justify-around py-2 z-40 shadow-lg">
+    <button onclick="switchTab('tasks')" class="nav-tab active-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-teal-600" data-target="tasks">
+      <i data-lucide="check-square" class="w-5 h-5"></i> Tasks
+    </button>
+    <button onclick="switchTab('calendar')" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="calendar">
+      <i data-lucide="calendar" class="w-5 h-5"></i> Calendar
+    </button>
+    <button onclick="switchTab('mom')" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="mom">
+      <i data-lucide="file-text" class="w-5 h-5"></i> MOM
+    </button>
+    <button onclick="switchTab('notepad')" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="notepad">
+      <i data-lucide="edit-3" class="w-5 h-5"></i> Notes
+    </button>
+  </nav>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Task Modal -->
+  <div id="task-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Create New Checklist Task</h3>
+        <button onclick="closeModal('task-modal')" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Task Title / Action Item</label>
+          <input type="text" id="task-title-input" placeholder="e.g. Clinical protocol review" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Priority</label>
+            <select id="task-priority-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Due Date</label>
+            <input type="date" id="task-date-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Assign Partner</label>
+          <input type="text" id="task-assigned-input" placeholder="e.g. Sumedh" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeModal('task-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer">Cancel</button>
+          <button onclick="submitTask()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold cursor-pointer">Save Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Event Modal -->
+  <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Schedule Calendar Event</h3>
+        <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Event / Meeting Title</label>
+          <input type="text" id="cal-title-input" placeholder="e.g. Partner Review Session" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+            <input type="date" id="cal-date-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Time</label>
+            <input type="time" id="cal-time-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Description / Notes</label>
+          <textarea id="cal-desc-input" rows="3" placeholder="Meeting details or agenda..." class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"></textarea>
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeModal('calendar-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer">Cancel</button>
+          <button onclick="submitCalendarEvent()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold cursor-pointer">Schedule Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MOM Modal -->
+  <div id="mom-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-xl space-y-4 custom-scrollbar">
+      <div class="flex items-center justify-between border-b pb-3 border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Create Minutes of Meeting (MOM) Sheet</h3>
+        <button onclick="closeModal('mom-modal')" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div class="p-3 bg-teal-50/50 rounded-xl border border-teal-100">
+          <label class="block text-[11px] font-bold text-teal-800 uppercase tracking-wider mb-1">Company Document Header Note</label>
+          <input type="text" id="mom-header-input" value="Agieshealthfirst Internal Healthcare Governance & Operations Record" class="w-full px-3 py-1.5 border border-teal-200 rounded-lg text-xs bg-white focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Title</label>
+          <input type="text" id="mom-title-input" placeholder="e.g. Healthcare Operations Strategy" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+            <input type="date" id="mom-date-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Time</label>
+            <input type="time" id="mom-time-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Chair</label>
+            <input type="text" id="mom-chair-input" placeholder="e.g. Dr. A. Dindore" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Attendees</label>
+            <input type="text" id="mom-attendees-input" placeholder="e.g. Sumedh, Onkar" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Agenda</label>
+          <textarea id="mom-agenda-input" rows="2" placeholder="List key agenda topics..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Discussions & Notes</label>
+          <textarea id="mom-discuss-input" rows="3" placeholder="Summary of deliberations..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Action Items / Decisions</label>
+          <textarea id="mom-action-input" rows="2" placeholder="Responsible persons and targets..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none"></textarea>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Custom Document Footer Note</label>
+          <input type="text" id="mom-footer-input" value="Confidential — Proprietary to Agieshealthfirst Partners. All rights reserved." class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeModal('mom-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer">Cancel</button>
+          <button onclick="submitMOM()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold cursor-pointer">Save MOM Sheet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="print-mom-area" class="hidden"></div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // EXACT WEB APP DEPLOYMENT URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbwuJPSlrr6IiKJkPb8QFqm-sB55N9KRp3mMNA9Gklo02QepsvhofC-BDa1r_7Rggo0/exec";
+
+    let activeUser = localStorage.getItem('ahf_member_name') || "Sumedh";
+    let cachedTasks = [];
+    let cachedEvents = [];
+    let cachedMOM = [];
+    let currentTaskFilter = 'all';
+    let calendarDate = new Date();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('current-user-input').value = activeUser;
+      lucide.createIcons();
+      fetchAllData();
+
+      // AUTO-POLLING: Fetches updates from Google Sheets every 8 seconds
+      setInterval(() => {
+        fetchAllData(false);
+      }, 8000);
+    });
+
+    function updateActiveUser() {
+      const val = document.getElementById('current-user-input').value.trim();
+      if (val) {
+        activeUser = val;
+        localStorage.setItem('ahf_member_name', val);
+      }
+    }
+
+    // CACHE-BUSTING API GET (Timestamp prevents stale responses across devices)
+    async function apiGet(sheetName) {
+      setSyncStatus("Syncing...");
+      try {
+        const cacheBuster = Date.now();
+        const res = await fetch(`${API_URL}?sheet=${encodeURIComponent(sheetName)}&_t=${cacheBuster}`, {
+          cache: "no-store",
+          headers: { "Pragma": "no-cache", "Cache-Control": "no-cache" }
+        });
+        const json = await res.json();
+        setSyncStatus("Live Google Sheets Sync");
+        return Array.isArray(json) ? json : [];
+      } catch (e) {
+        setSyncStatus("Offline / Cached");
+        return [];
+      }
+    }
+
+    async function apiPost(payload) {
+      setSyncStatus("Saving to Sheet...");
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        setSyncStatus("Live Google Sheets Sync");
+        return json;
+      } catch (e) {
+        setSyncStatus("Saved locally");
+        return { status: "cached" };
+      }
+    }
+
+    function setSyncStatus(txt) {
+      const el = document.getElementById('sync-status');
+      if (el) el.textContent = txt;
+    }
+
+    async function fetchAllData(spin = false) {
+      if (spin) {
+        const icon = document.getElementById('refresh-icon');
+        if (icon) {
+          icon.classList.add('animate-spin');
+          setTimeout(() => icon.classList.remove('animate-spin'), 1000);
+        }
+      }
+      await Promise.all([
+        fetchTasks(),
+        fetchCalendar(),
+        fetchMOM(),
+        fetchNotepad()
+      ]);
+    }
+
+    // CHECKLIST
+    async function fetchTasks() {
+      const remote = await apiGet("Tasks");
+      if (remote && remote.length > 0) cachedTasks = remote;
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-list');
+      if (!cachedTasks || cachedTasks.length === 0) {
+        container.innerHTML = `<div class="p-8 text

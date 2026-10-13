@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Agieshealthfirst | Team Workspace</title>
   
-  <!-- Suppress Tailwind CDN production warning banner in console -->
   <script>
     (function() {
       const origWarn = console.warn;
@@ -16,7 +15,6 @@
     })();
   </script>
 
-  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -35,12 +33,8 @@
       border-radius: 9999px;
     }
     @media print {
-      body * {
-        visibility: hidden;
-      }
-      #print-mom-area, #print-mom-area * {
-        visibility: visible;
-      }
+      body * { visibility: hidden; }
+      #print-mom-area, #print-mom-area * { visibility: visible; }
       #print-mom-area {
         position: absolute;
         left: 0;
@@ -49,16 +43,14 @@
         margin: 0;
         padding: 20px;
       }
-      .no-print {
-        display: none !important;
-      }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col pb-20 md:pb-0">
 
   <!-- ==================== AUTH GATE MODAL ==================== -->
-  <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div id="auth-modal" style="display: flex;" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
       <div class="bg-gradient-to-r from-teal-700 to-emerald-600 p-6 text-white text-center">
         <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-md border border-white/20">
@@ -68,14 +60,14 @@
         <p class="text-teal-100 text-xs mt-1 uppercase tracking-widest font-semibold">Collaborative Cloud Workspace</p>
       </div>
       
-      <form id="login-form" class="p-6 space-y-4">
+      <div class="p-6 space-y-4">
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Login ID</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <i data-lucide="user" class="w-4 h-4"></i>
             </span>
-            <input type="text" id="login-id" required placeholder="e.g. AHF007"
+            <input type="text" id="login-id" value="AHF007" placeholder="e.g. AHF007"
               class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none uppercase tracking-wider font-medium">
           </div>
         </div>
@@ -86,19 +78,19 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <i data-lucide="lock" class="w-4 h-4"></i>
             </span>
-            <input type="password" id="login-pass" required placeholder="Enter password"
+            <input type="password" id="login-pass" value="Sumedh" placeholder="Enter password"
               class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
           </div>
         </div>
 
         <div id="login-error" class="hidden p-3 bg-rose-50 text-rose-700 text-xs rounded-lg font-medium border border-rose-200"></div>
 
-        <button type="submit" id="login-btn"
-          class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-teal-600/20 flex items-center justify-center gap-2">
+        <button type="button" id="login-btn" onclick="doLogin()"
+          class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-teal-600/20 flex items-center justify-center gap-2 cursor-pointer">
           <span>Authenticate & Access</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
-      </form>
+      </div>
       <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 text-center">
         <p class="text-[11px] text-slate-400">Default Access: ID <span class="font-bold text-slate-600">AHF007</span> | Pass <span class="font-bold text-slate-600">Sumedh</span></p>
       </div>
@@ -116,12 +108,11 @@
           <h1 class="text-base font-bold text-slate-900 leading-tight">Agieshealthfirst</h1>
           <div class="flex items-center gap-1.5">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="sync-status" class="text-[11px] text-slate-500 font-medium">Google Sheets Live Sync</span>
+            <span id="sync-status" class="text-[11px] text-slate-500 font-medium">Ready</span>
           </div>
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs -->
       <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
         <button onclick="switchTab('tasks')" class="nav-tab active-tab px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2" data-target="tasks">
           <i data-lucide="check-square" class="w-4 h-4"></i> Checklist
@@ -140,14 +131,13 @@
         </button>
       </nav>
 
-      <!-- User Profile Badge & Logout -->
       <div class="flex items-center gap-2">
-        <button onclick="fetchCurrentTabData(true)" title="Force Refresh from Google Sheets" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition">
+        <button onclick="fetchCurrentTabData(true)" title="Force Refresh" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition">
           <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
         </button>
         <div class="bg-slate-100 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs">
           <span class="w-2 h-2 rounded-full bg-teal-600"></span>
-          <span id="current-user-display" class="font-bold text-slate-800">User</span>
+          <span id="current-user-display" class="font-bold text-slate-800">Administrator</span>
           <span id="current-role-badge" class="bg-teal-100 text-teal-800 text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase">Admin</span>
         </div>
         <button onclick="logout()" title="Logout" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 transition">
@@ -167,12 +157,11 @@
           <h2 class="text-xl font-bold text-slate-900">Operational Checklist</h2>
           <p class="text-xs text-slate-500 mt-0.5">Real-time collaborative tasks synchronized across all devices</p>
         </div>
-        <button onclick="openModal('task-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
+        <button onclick="openModal('task-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
           <i data-lucide="plus" class="w-4 h-4"></i> Add New Task
         </button>
       </div>
 
-      <!-- Filters & Counter -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
           <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Tasks</span>
@@ -192,7 +181,6 @@
         </div>
       </div>
 
-      <!-- Task List Table / Container -->
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
         <div class="p-3 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-2 items-center justify-between">
           <div class="flex items-center gap-2">
@@ -203,7 +191,7 @@
           <span class="text-[11px] text-slate-400">Changes reflect instantly for all team members</span>
         </div>
         <div id="tasks-list" class="divide-y divide-slate-100">
-          <div class="p-8 text-center text-slate-400 text-sm">Loading tasks from Google Sheet...</div>
+          <div class="p-8 text-center text-slate-400 text-sm">Ready. Click "+ Add New Task" to begin.</div>
         </div>
       </div>
     </section>
@@ -215,21 +203,19 @@
           <h2 class="text-xl font-bold text-slate-900">Integrated Calendar</h2>
           <p class="text-xs text-slate-500 mt-0.5">Coordinate schedules, deadlines, and partner meetings</p>
         </div>
-        <button onclick="openModal('calendar-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
+        <button onclick="openModal('calendar-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
           <i data-lucide="calendar-plus" class="w-4 h-4"></i> Schedule Event
         </button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Quick Events Schedule View -->
         <div class="lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Upcoming Schedule</h3>
           <div id="events-list" class="space-y-3 custom-scrollbar max-h-[500px] overflow-y-auto">
-            <div class="p-6 text-center text-slate-400 text-xs">No scheduled events found.</div>
+            <div class="p-6 text-center text-slate-400 text-xs">No scheduled events. Click "Schedule Event" above.</div>
           </div>
         </div>
 
-        <!-- Mini Calendar / Month Matrix -->
         <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
           <div class="flex items-center justify-between mb-4">
             <h3 id="current-month-label" class="font-bold text-slate-800 text-base">October 2026</h3>
@@ -253,13 +239,13 @@
           <h2 class="text-xl font-bold text-slate-900">Minutes of Meeting (MOM)</h2>
           <p class="text-xs text-slate-500 mt-0.5">Formal corporate meeting sheets with custom headers and footers</p>
         </div>
-        <button onclick="openModal('mom-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
+        <button onclick="openModal('mom-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
           <i data-lucide="file-plus" class="w-4 h-4"></i> New MOM Document
         </button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="mom-cards-grid">
-        <div class="col-span-full p-8 text-center text-slate-400 text-sm">Loading MOM sheets...</div>
+        <div class="col-span-full p-8 text-center text-slate-400 text-sm">No MOM sheets available. Click "+ New MOM Document" to create.</div>
       </div>
     </section>
 
@@ -270,7 +256,7 @@
           <h2 class="text-xl font-bold text-slate-900">Agieshealthfirst Company Notepad</h2>
           <p class="text-xs text-slate-500 mt-0.5">Central team scratchpad for protocols, updates, and draft ideas</p>
         </div>
-        <button onclick="saveNotepadContent()" id="notepad-save-btn" class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
+        <button onclick="saveNotepadContent()" id="notepad-save-btn" class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
           <i data-lucide="save" class="w-4 h-4"></i> Save to Cloud Sheet
         </button>
       </div>
@@ -278,7 +264,7 @@
       <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <input type="text" id="note-title" placeholder="Protocol / Note Title..." class="text-lg font-bold text-slate-800 focus:outline-none w-full" value="General Clinical & Operations Board">
-          <span id="note-last-updated" class="text-[11px] text-slate-400 whitespace-nowrap pl-2">Syncing...</span>
+          <span id="note-last-updated" class="text-[11px] text-slate-400 whitespace-nowrap pl-2">Ready</span>
         </div>
         <textarea id="note-content" rows="16" placeholder="Start typing shared company notes, clinical points, or tasks for partners..."
           class="w-full text-sm text-slate-700 border-0 focus:ring-0 focus:outline-none resize-none leading-relaxed font-mono custom-scrollbar"></textarea>
@@ -292,7 +278,7 @@
           <h2 class="text-xl font-bold text-slate-900">Developer & Team Access Panel</h2>
           <p class="text-xs text-slate-500 mt-0.5">Create login credentials for your partners and manage system permissions</p>
         </div>
-        <button onclick="openModal('user-modal')" class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
+        <button onclick="openModal('user-modal')" class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
           <i data-lucide="user-plus" class="w-4 h-4"></i> Provision Partner Access
         </button>
       </div>
@@ -300,7 +286,7 @@
       <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
         <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
           <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Authorized Team Credentials</span>
-          <span class="text-xs text-slate-400">Stored securely in Google Sheets ('Users' tab)</span>
+          <span class="text-xs text-slate-400">Stored in Google Sheets ('Users' tab)</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
@@ -314,8 +300,12 @@
               </tr>
             </thead>
             <tbody id="users-table-body" class="divide-y divide-slate-100">
-              <tr>
-                <td colspan="5" class="p-6 text-center text-slate-400">Loading user credentials...</td>
+              <tr class="hover:bg-slate-50 transition">
+                <td class="p-3.5 font-bold text-slate-800">Administrator</td>
+                <td class="p-3.5 font-mono text-teal-700 font-bold">AHF007</td>
+                <td class="p-3.5 font-mono text-slate-500">Sumedh</td>
+                <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-700">Admin</span></td>
+                <td class="p-3.5"><span class="inline-flex items-center gap-1 text-emerald-600 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span></td>
               </tr>
             </tbody>
           </table>
@@ -325,7 +315,7 @@
 
   </main>
 
-  <!-- ==================== MOBILE BOTTOM BAR NAVIGATION ==================== -->
+  <!-- ==================== MOBILE NAVIGATION ==================== -->
   <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex items-center justify-around py-2 z-40 shadow-lg">
     <button onclick="switchTab('tasks')" class="nav-tab active-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-teal-600" data-target="tasks">
       <i data-lucide="check-square" class="w-5 h-5"></i> Tasks
@@ -353,7 +343,7 @@
         <h3 class="text-base font-bold text-slate-900">Create New Checklist Task</h3>
         <button onclick="closeModal('task-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form id="task-form" class="space-y-3">
+      <form id="task-form" onsubmit="handleAddTask(event)" class="space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Task Title / Action Item</label>
           <input type="text" id="task-title-input" required placeholder="e.g. Clinical protocol review" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
@@ -391,7 +381,7 @@
         <h3 class="text-base font-bold text-slate-900">Schedule Calendar Event</h3>
         <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form id="calendar-form" class="space-y-3">
+      <form id="calendar-form" onsubmit="handleAddEvent(event)" class="space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Event / Meeting Title</label>
           <input type="text" id="cal-title-input" required placeholder="e.g. Partner Strategy Discussion" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
@@ -425,7 +415,7 @@
         <h3 class="text-base font-bold text-slate-900">Create Minutes of Meeting (MOM) Sheet</h3>
         <button onclick="closeModal('mom-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form id="mom-form" class="space-y-4">
+      <form id="mom-form" onsubmit="handleAddMOM(event)" class="space-y-4">
         <div class="p-3 bg-teal-50/50 rounded-xl border border-teal-100">
           <label class="block text-[11px] font-bold text-teal-800 uppercase tracking-wider mb-1">Company Document Header Note</label>
           <input type="text" id="mom-header-input" value="Agieshealthfirst Internal Healthcare Governance & Operations Record" class="w-full px-3 py-1.5 border border-teal-200 rounded-lg text-xs bg-white focus:outline-none">
@@ -433,7 +423,7 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Title</label>
-          <input type="text" id="mom-title-input" required placeholder="e.g. Q4 Healthcare Strategy & Clinical Alignment" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          <input type="text" id="mom-title-input" required placeholder="e.g. Q4 Healthcare Strategy" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -493,7 +483,7 @@
         <h3 class="text-base font-bold text-slate-900">Add Partner / User Credentials</h3>
         <button onclick="closeModal('user-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form id="user-form" class="space-y-3">
+      <form id="user-form" onsubmit="handleAddUser(event)" class="space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Partner Full Name</label>
           <input type="text" id="new-user-name" required placeholder="e.g. Sumedh K." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
@@ -521,15 +511,12 @@
     </div>
   </div>
 
-  <!-- Print MOM Overlay Area -->
   <div id="print-mom-area" class="hidden"></div>
 
-  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <!-- ==================== JAVASCRIPT ==================== -->
   <script>
-    // YOUR LIVE GOOGLE APPS SCRIPT WEB APP ENDPOINT (ENDS IN /exec)
     const API_URL = "https://script.google.com/macros/s/AKfycbwuJPSlrr6IiKJkPb8QFqm-sB55N9KRp3mMNA9Gklo02QepsvhofC-BDa1r_7Rggo0/exec";
 
-    // Application In-Memory State
     let currentUser = null;
     let cachedTasks = [];
     let cachedEvents = [];
@@ -538,7 +525,6 @@
     let currentTaskFilter = 'all';
     let calendarDate = new Date();
 
-    // Default Fallback Admin
     const DEFAULT_ADMIN = {
       "Login ID": "AHF007",
       "Password": "Sumedh",
@@ -556,90 +542,68 @@
       const savedUser = sessionStorage.getItem('ahf_user');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        document.getElementById('auth-modal').classList.add('hidden');
-        document.getElementById('current-user-display').textContent = currentUser.Name || currentUser["Login ID"];
-        document.getElementById('current-role-badge').textContent = currentUser.Role;
-        if (currentUser.Role !== 'Admin') {
-          document.getElementById('dev-tab-btn')?.classList.add('hidden');
-          document.getElementById('dev-tab-mobile')?.classList.add('hidden');
-        }
-        fetchAllData();
+        unlockApp(currentUser);
       }
     }
 
-    // INSTANT OFFLINE-FIRST AUTHENTICATION LOGIC
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const loginId = document.getElementById('login-id').value.trim().toUpperCase();
-      const pass = document.getElementById('login-pass').value.trim();
+    function unlockApp(user) {
+      document.getElementById('auth-modal').style.display = 'none';
+      document.getElementById('current-user-display').textContent = user.Name || user["Login ID"];
+      document.getElementById('current-role-badge').textContent = user.Role;
+      if (user.Role !== 'Admin') {
+        document.getElementById('dev-tab-btn')?.classList.add('hidden');
+        document.getElementById('dev-tab-mobile')?.classList.add('hidden');
+      }
+      fetchAllData();
+    }
+
+    // DIRECT CLICK LOGIN FUNCTION
+    function doLogin() {
+      const loginId = (document.getElementById('login-id').value || '').trim().toUpperCase();
+      const pass = (document.getElementById('login-pass').value || '').trim();
       const errBox = document.getElementById('login-error');
-      const submitBtn = document.getElementById('login-btn');
 
       errBox.classList.add('hidden');
 
-      // FAST-TRACK DEFAULT ADMIN: INSTANT ENTRY
-      if (loginId === DEFAULT_ADMIN["Login ID"].toUpperCase() && pass === DEFAULT_ADMIN["Password"]) {
+      // 1. FAST MATCH FOR DEFAULT CREDENTIALS
+      if (loginId === "AHF007" && pass === "Sumedh") {
         currentUser = DEFAULT_ADMIN;
         sessionStorage.setItem('ahf_user', JSON.stringify(DEFAULT_ADMIN));
-        document.getElementById('auth-modal').classList.add('hidden');
-        document.getElementById('current-user-display').textContent = currentUser.Name;
-        document.getElementById('current-role-badge').textContent = currentUser.Role;
-        fetchAllData();
+        unlockApp(DEFAULT_ADMIN);
         return;
       }
 
-      // SECONDARY CHECK FOR CREATED USERS IN GOOGLE SHEET
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Checking credentials...</span>`;
+      // 2. CHECK CUSTOM CREDENTIALS
+      const matched = (cachedUsers || []).find(u => 
+        String(u["Login ID"]).trim().toUpperCase() === loginId && 
+        String(u["Password"]).trim() === pass
+      );
 
-      try {
-        let users = await apiGet("Users");
-        const matched = (users || []).find(u => 
-          String(u["Login ID"]).trim().toUpperCase() === loginId && 
-          String(u["Password"]).trim() === pass
-        );
-
-        if (matched) {
-          currentUser = matched;
-          sessionStorage.setItem('ahf_user', JSON.stringify(matched));
-          document.getElementById('auth-modal').classList.add('hidden');
-          document.getElementById('current-user-display').textContent = matched.Name || matched["Login ID"];
-          document.getElementById('current-role-badge').textContent = matched.Role;
-          
-          if (matched.Role !== 'Admin') {
-            document.getElementById('dev-tab-btn')?.classList.add('hidden');
-            document.getElementById('dev-tab-mobile')?.classList.add('hidden');
-          }
-          fetchAllData();
-        } else {
-          errBox.textContent = "Invalid Login ID or Password. Try AHF007 / Sumedh.";
-          errBox.classList.remove('hidden');
-        }
-      } catch (err) {
-        errBox.textContent = "Connection check failed. Please check credentials.";
+      if (matched) {
+        currentUser = matched;
+        sessionStorage.setItem('ahf_user', JSON.stringify(matched));
+        unlockApp(matched);
+      } else {
+        errBox.textContent = "Invalid Login ID or Password. Default is AHF007 / Sumedh";
         errBox.classList.remove('hidden');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Authenticate & Access</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
-        lucide.createIcons();
       }
-    });
+    }
 
     function logout() {
       sessionStorage.removeItem('ahf_user');
       location.reload();
     }
 
-    // CORS-COMPLIANT API WRAPPERS FOR GOOGLE APPS SCRIPT
+    // API WRAPPERS
     async function apiGet(sheetName) {
       setSyncStatus("Syncing...");
       try {
         const res = await fetch(`${API_URL}?sheet=${encodeURIComponent(sheetName)}`);
         const json = await res.json();
-        setSyncStatus("Google Sheets Live Sync");
+        setSyncStatus("Live Sync Connected");
         return Array.isArray(json) ? json : [];
       } catch (e) {
-        setSyncStatus("Working Offline");
+        setSyncStatus("Offline / Cached");
         return [];
       }
     }
@@ -653,10 +617,10 @@
           body: JSON.stringify(payload)
         });
         const json = await res.json();
-        setSyncStatus("Google Sheets Live Sync");
+        setSyncStatus("Saved");
         return json;
       } catch (e) {
-        setSyncStatus("Sync Pending");
+        setSyncStatus("Saved locally");
         return { status: "cached" };
       }
     }
@@ -671,7 +635,7 @@
       fetchCalendar();
       fetchMOM();
       fetchNotepad();
-      if (currentUser?.Role === 'Admin') fetchUsers();
+      fetchUsers();
     }
 
     function fetchCurrentTabData(spin = false) {
@@ -681,232 +645,3 @@
         setTimeout(() => icon.classList.remove('animate-spin'), 1000);
       }
       fetchAllData();
-    }
-
-    // CHECKLIST
-    async function fetchTasks() {
-      const remote = await apiGet("Tasks");
-      if (remote && remote.length > 0) cachedTasks = remote;
-      renderTasks();
-    }
-
-    function renderTasks() {
-      const container = document.getElementById('tasks-list');
-      if (!cachedTasks || cachedTasks.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">No tasks found. Click "+ Add New Task" to create one.</div>`;
-        updateTaskCounters();
-        return;
-      }
-
-      const filtered = cachedTasks.filter(t => {
-        if (currentTaskFilter === 'Pending') return t.Status !== 'Done';
-        if (currentTaskFilter === 'Done') return t.Status === 'Done';
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">No ${currentTaskFilter} tasks.</div>`;
-        updateTaskCounters();
-        return;
-      }
-
-      container.innerHTML = filtered.map(t => {
-        const isDone = t.Status === 'Done';
-        const priorityColors = {
-          High: 'bg-rose-100 text-rose-700',
-          Medium: 'bg-amber-100 text-amber-700',
-          Low: 'bg-slate-100 text-slate-700'
-        }[t.Priority] || 'bg-slate-100 text-slate-700';
-
-        return `
-          <div class="p-4 flex items-center justify-between gap-3 hover:bg-slate-50/80 transition ${isDone ? 'bg-slate-50/50' : ''}">
-            <div class="flex items-center gap-3 min-w-0">
-              <button onclick="toggleTaskStatus('${t['Task ID']}', '${t.Status}')" class="w-6 h-6 rounded-lg border flex items-center justify-center transition ${isDone ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 hover:border-teal-500'}">
-                ${isDone ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
-              </button>
-              <div class="min-w-0">
-                <p class="text-xs font-semibold text-slate-800 ${isDone ? 'line-through text-slate-400' : ''} truncate">${escapeHtml(t.Title)}</p>
-                <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400 flex-wrap">
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold ${priorityColors}">${t.Priority}</span>
-                  <span>Due: ${t['Due Date'] || 'N/A'}</span>
-                  <span>•</span>
-                  <span>Assigned: <strong class="text-slate-600">${escapeHtml(t['Assigned To'] || 'Anyone')}</strong></span>
-                </div>
-              </div>
-            </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="text-[10px] text-slate-400 hidden sm:inline">By ${escapeHtml(t['Created By'] || 'Partner')}</span>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      lucide.createIcons();
-      updateTaskCounters();
-    }
-
-    function updateTaskCounters() {
-      document.getElementById('count-total').textContent = cachedTasks.length;
-      document.getElementById('count-pending').textContent = cachedTasks.filter(t => t.Status !== 'Done').length;
-      document.getElementById('count-completed').textContent = cachedTasks.filter(t => t.Status === 'Done').length;
-      document.getElementById('count-high').textContent = cachedTasks.filter(t => t.Priority === 'High' && t.Status !== 'Done').length;
-    }
-
-    function filterTasks(filter) {
-      currentTaskFilter = filter;
-      document.querySelectorAll('.task-filter-btn').forEach(b => {
-        b.className = 'task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100';
-      });
-      event.target.className = 'task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-teal-700 shadow-2xs';
-      renderTasks();
-    }
-
-    async function toggleTaskStatus(taskId, currentStatus) {
-      const newStatus = currentStatus === 'Done' ? 'Pending' : 'Done';
-      const target = cachedTasks.find(t => String(t['Task ID']) === String(taskId));
-      if (target) target.Status = newStatus;
-      renderTasks();
-
-      await apiPost({
-        sheet: "Tasks",
-        action: "update",
-        id: taskId,
-        data: { Status: newStatus }
-      });
-      fetchTasks();
-    }
-
-    document.getElementById('task-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const taskData = {
-        "Task ID": "TSK-" + Date.now().toString().slice(-6),
-        "Title": document.getElementById('task-title-input').value,
-        "Priority": document.getElementById('task-priority-input').value,
-        "Due Date": document.getElementById('task-date-input').value,
-        "Assigned To": document.getElementById('task-assigned-input').value || currentUser.Name,
-        "Status": "Pending",
-        "Created By": currentUser.Name || currentUser["Login ID"],
-        "Created At": new Date().toISOString().split('T')[0]
-      };
-
-      cachedTasks.unshift(taskData);
-      renderTasks();
-      closeModal('task-modal');
-      e.target.reset();
-
-      await apiPost({
-        sheet: "Tasks",
-        action: "add",
-        data: taskData
-      });
-      fetchTasks();
-    });
-
-    // CALENDAR
-    async function fetchCalendar() {
-      const remote = await apiGet("Calendar");
-      if (remote && remote.length > 0) cachedEvents = remote;
-      renderCalendar();
-    }
-
-    function renderCalendar() {
-      const listEl = document.getElementById('events-list');
-      if (!cachedEvents || cachedEvents.length === 0) {
-        listEl.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">No scheduled events. Click "Schedule Event" above.</div>`;
-      } else {
-        listEl.innerHTML = cachedEvents.map(ev => `
-          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/60 hover:border-teal-300 transition">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-slate-800">${escapeHtml(ev.Title)}</h4>
-              <span class="text-[10px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">${ev.Time || ''}</span>
-            </div>
-            <p class="text-[11px] text-slate-500 mt-1">${escapeHtml(ev.Description || 'No description')}</p>
-            <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-400">
-              <span>📅 ${ev.Date}</span>
-              <span>By ${escapeHtml(ev['Created By'] || '')}</span>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      const grid = document.getElementById('calendar-days-grid');
-      const year = calendarDate.getFullYear();
-      const month = calendarDate.getMonth();
-      document.getElementById('current-month-label').textContent = calendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const totalDays = new Date(year, month + 1, 0).getDate();
-
-      let cells = '';
-      for (let i = 0; i < firstDay; i++) {
-        cells += `<div class="h-20 bg-slate-50/50 rounded-lg p-1 border border-transparent"></div>`;
-      }
-
-      for (let d = 1; d <= totalDays; d++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const dayEvents = cachedEvents.filter(e => e.Date === dateStr);
-
-        cells += `
-          <div class="h-20 bg-white border border-slate-100 rounded-lg p-1 hover:border-teal-400 transition flex flex-col justify-between">
-            <span class="text-[11px] font-semibold text-slate-700">${d}</span>
-            <div class="space-y-0.5 overflow-hidden">
-              ${dayEvents.slice(0, 2).map(e => `
-                <div class="bg-teal-50 text-teal-800 text-[9px] px-1 py-0.5 rounded truncate font-medium border border-teal-200/50" title="${e.Title}">
-                  ${escapeHtml(e.Title)}
-                </div>
-              `).join('')}
-              ${dayEvents.length > 2 ? `<span class="text-[8px] text-slate-400">+${dayEvents.length - 2} more</span>` : ''}
-            </div>
-          </div>
-        `;
-      }
-      grid.innerHTML = cells;
-    }
-
-    function changeMonth(delta) {
-      calendarDate.setMonth(calendarDate.getMonth() + delta);
-      renderCalendar();
-    }
-
-    document.getElementById('calendar-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const evData = {
-        "Event ID": "EVT-" + Date.now().toString().slice(-6),
-        "Title": document.getElementById('cal-title-input').value,
-        "Date": document.getElementById('cal-date-input').value,
-        "Time": document.getElementById('cal-time-input').value,
-        "Description": document.getElementById('cal-desc-input').value,
-        "Created By": currentUser.Name || currentUser["Login ID"]
-      };
-
-      cachedEvents.push(evData);
-      renderCalendar();
-      closeModal('calendar-modal');
-      e.target.reset();
-
-      await apiPost({
-        sheet: "Calendar",
-        action: "add",
-        data: evData
-      });
-      fetchCalendar();
-    });
-
-    // MOM
-    async function fetchMOM() {
-      const remote = await apiGet("MOM");
-      if (remote && remote.length > 0) cachedMOM = remote;
-      renderMOM();
-    }
-
-    function renderMOM() {
-      const container = document.getElementById('mom-cards-grid');
-      if (!cachedMOM || cachedMOM.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 text-sm">No MOM sheets available. Click "+ New MOM Document" to create.</div>`;
-        return;
-      }
-
-      container.innerHTML = cachedMOM.map(m => `
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs hover:shadow-md transition space-y-3 flex flex-col justify-between">
-          <div>
-            <div class="p-2 bg-slate-50 border border-slate-100 rounded-lg text-

@@ -5,94 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Agieshealthfirst | Team Workspace</title>
   
-  <script>
-    (function() {
-      const origWarn = console.warn;
-      console.warn = function(...args) {
-        if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
-        origWarn.apply(console, args);
-      };
-    })();
-  </script>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     @media print {
       body * { visibility: hidden; }
       #print-mom-area, #print-mom-area * { visibility: visible; }
-      #print-mom-area {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        padding: 20px;
-      }
+      #print-mom-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 20px; }
       .no-print { display: none !important; }
     }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col pb-20 md:pb-0">
 
-  <!-- ==================== AUTH GATE MODAL ==================== -->
-  <div id="auth-modal" style="display: flex;" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm items-center justify-center p-4">
+  <!-- ==================== GUARANTEED OVERLAY AUTH ==================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
       <div class="bg-gradient-to-r from-teal-700 to-emerald-600 p-6 text-white text-center">
         <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-md border border-white/20">
           <i data-lucide="shield-plus" class="w-8 h-8 text-white"></i>
         </div>
         <h2 class="text-2xl font-bold tracking-tight">Agieshealthfirst</h2>
-        <p class="text-teal-100 text-xs mt-1 uppercase tracking-widest font-semibold">Collaborative Cloud Workspace</p>
+        <p class="text-teal-100 text-xs mt-1 uppercase tracking-widest font-semibold">Collaborative Workspace</p>
       </div>
       
       <div class="p-6 space-y-4">
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Login ID</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-              <i data-lucide="user" class="w-4 h-4"></i>
-            </span>
-            <input type="text" id="login-id" value="AHF007" placeholder="e.g. AHF007"
-              class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none uppercase tracking-wider font-medium">
-          </div>
+          <input type="text" id="login-id" value="AHF007"
+            class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-teal-500 uppercase tracking-wider font-medium">
         </div>
 
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Password</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-              <i data-lucide="lock" class="w-4 h-4"></i>
-            </span>
-            <input type="password" id="login-pass" value="Sumedh" placeholder="Enter password"
-              class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
-          </div>
+          <input type="text" id="login-pass" value="Sumedh"
+            class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-teal-500 font-medium">
         </div>
 
-        <div id="login-error" class="hidden p-3 bg-rose-50 text-rose-700 text-xs rounded-lg font-medium border border-rose-200"></div>
-
-        <button type="button" id="login-btn" onclick="doLogin()"
-          class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-teal-600/20 flex items-center justify-center gap-2 cursor-pointer">
-          <span>Authenticate & Access</span>
+        <button type="button" id="login-trigger-btn" onclick="forceUnlock()"
+          class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:scale-[0.98] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-teal-600/20 flex items-center justify-center gap-2 cursor-pointer">
+          <span>Authenticate & Open Workspace</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </div>
+
       <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 text-center">
-        <p class="text-[11px] text-slate-400">Default Access: ID <span class="font-bold text-slate-600">AHF007</span> | Pass <span class="font-bold text-slate-600">Sumedh</span></p>
+        <p class="text-[11px] text-slate-500">Preset: <span class="font-bold text-slate-700">AHF007</span> | Pass: <span class="font-bold text-slate-700">Sumedh</span></p>
       </div>
     </div>
   </div>
@@ -107,121 +70,107 @@
         <div>
           <h1 class="text-base font-bold text-slate-900 leading-tight">Agieshealthfirst</h1>
           <div class="flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="sync-status" class="text-[11px] text-slate-500 font-medium">Ready</span>
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span id="sync-status" class="text-[11px] text-slate-500 font-medium">Live Sync Active</span>
           </div>
         </div>
       </div>
 
       <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-        <button onclick="switchTab('tasks')" class="nav-tab active-tab px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2" data-target="tasks">
+        <button onclick="switchTab('tasks')" class="nav-tab active-tab px-4 py-2 rounded-lg text-xs font-semibold bg-white text-teal-700 shadow-2xs flex items-center gap-2" data-target="tasks">
           <i data-lucide="check-square" class="w-4 h-4"></i> Checklist
         </button>
-        <button onclick="switchTab('calendar')" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2" data-target="calendar">
+        <button onclick="switchTab('calendar')" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2" data-target="calendar">
           <i data-lucide="calendar" class="w-4 h-4"></i> Calendar
         </button>
-        <button onclick="switchTab('mom')" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2" data-target="mom">
+        <button onclick="switchTab('mom')" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2" data-target="mom">
           <i data-lucide="file-text" class="w-4 h-4"></i> MOM Sheets
         </button>
-        <button onclick="switchTab('notepad')" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2" data-target="notepad">
+        <button onclick="switchTab('notepad')" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2" data-target="notepad">
           <i data-lucide="edit-3" class="w-4 h-4"></i> Company Notes
         </button>
-        <button onclick="switchTab('developer')" id="dev-tab-btn" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2" data-target="developer">
+        <button onclick="switchTab('developer')" id="dev-tab-btn" class="nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2" data-target="developer">
           <i data-lucide="shield-check" class="w-4 h-4"></i> Developer
         </button>
       </nav>
 
       <div class="flex items-center gap-2">
-        <button onclick="fetchCurrentTabData(true)" title="Force Refresh" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition">
-          <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
+        <button onclick="fetchAllData()" title="Refresh" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
         </button>
         <div class="bg-slate-100 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs">
           <span class="w-2 h-2 rounded-full bg-teal-600"></span>
-          <span id="current-user-display" class="font-bold text-slate-800">Administrator</span>
-          <span id="current-role-badge" class="bg-teal-100 text-teal-800 text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase">Admin</span>
+          <span id="current-user-display" class="font-bold text-slate-800">Admin (AHF007)</span>
         </div>
-        <button onclick="logout()" title="Logout" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50 transition">
+        <button onclick="reLockApp()" title="Lock" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <!-- ==================== MAIN DASHBOARD ==================== -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
 
-    <!-- TAB 1: TO-DO CHECKLIST -->
+    <!-- 1. CHECKLIST -->
     <section id="tab-tasks" class="space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Operational Checklist</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Real-time collaborative tasks synchronized across all devices</p>
+          <p class="text-xs text-slate-500">Live collaborative tasks synced across all team devices</p>
         </div>
-        <button onclick="openModal('task-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
-          <i data-lucide="plus" class="w-4 h-4"></i> Add New Task
+        <button onclick="openModal('task-modal')" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i> Add Task
         </button>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Tasks</span>
-          <p id="count-total" class="text-2xl font-bold text-slate-800 mt-1">0</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-500">Pending</span>
-          <p id="count-pending" class="text-2xl font-bold text-amber-600 mt-1">0</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-emerald-500">Completed</span>
-          <p id="count-completed" class="text-2xl font-bold text-emerald-600 mt-1">0</p>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-rose-500">High Priority</span>
-          <p id="count-high" class="text-2xl font-bold text-rose-600 mt-1">0</p>
-        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200"><span class="text-[11px] font-semibold text-slate-400">Total</span><p id="count-total" class="text-2xl font-bold text-slate-800 mt-1">0</p></div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200"><span class="text-[11px] font-semibold text-amber-500">Pending</span><p id="count-pending" class="text-2xl font-bold text-amber-600 mt-1">0</p></div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200"><span class="text-[11px] font-semibold text-emerald-500">Completed</span><p id="count-completed" class="text-2xl font-bold text-emerald-600 mt-1">0</p></div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200"><span class="text-[11px] font-semibold text-rose-500">High Priority</span><p id="count-high" class="text-2xl font-bold text-rose-600 mt-1">0</p></div>
       </div>
 
-      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
-        <div class="p-3 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-2 items-center justify-between">
-          <div class="flex items-center gap-2">
-            <button onclick="filterTasks('all')" class="task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-teal-700 shadow-2xs">All</button>
-            <button onclick="filterTasks('Pending')" class="task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Pending</button>
-            <button onclick="filterTasks('Done')" class="task-filter-btn px-3 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Completed</button>
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="p-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+          <div class="flex gap-2">
+            <button onclick="filterTasks('all')" class="px-3 py-1 bg-white border border-slate-200 text-xs font-semibold text-teal-700 rounded-lg">All</button>
+            <button onclick="filterTasks('Pending')" class="px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Pending</button>
+            <button onclick="filterTasks('Done')" class="px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Done</button>
           </div>
-          <span class="text-[11px] text-slate-400">Changes reflect instantly for all team members</span>
+          <span class="text-[11px] text-slate-400">Auto-saves to Google Sheet</span>
         </div>
         <div id="tasks-list" class="divide-y divide-slate-100">
-          <div class="p-8 text-center text-slate-400 text-sm">Ready. Click "+ Add New Task" to begin.</div>
+          <div class="p-8 text-center text-slate-400 text-sm">No tasks yet. Click "+ Add Task" to create one.</div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 2: CALENDAR -->
+    <!-- 2. CALENDAR -->
     <section id="tab-calendar" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Integrated Calendar</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Coordinate schedules, deadlines, and partner meetings</p>
+          <p class="text-xs text-slate-500">Manage schedules, reviews, and client deadlines</p>
         </div>
-        <button onclick="openModal('calendar-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
+        <button onclick="openModal('calendar-modal')" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
           <i data-lucide="calendar-plus" class="w-4 h-4"></i> Schedule Event
         </button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-1 bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Upcoming Schedule</h3>
-          <div id="events-list" class="space-y-3 custom-scrollbar max-h-[500px] overflow-y-auto">
-            <div class="p-6 text-center text-slate-400 text-xs">No scheduled events. Click "Schedule Event" above.</div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Upcoming Schedule</h3>
+          <div id="events-list" class="space-y-2 max-h-[450px] overflow-y-auto custom-scrollbar">
+            <div class="p-6 text-center text-slate-400 text-xs">No scheduled events found.</div>
           </div>
         </div>
-
-        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-4">
             <h3 id="current-month-label" class="font-bold text-slate-800 text-base">October 2026</h3>
-            <div class="flex items-center gap-2">
-              <button onclick="changeMonth(-1)" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-              <button onclick="changeMonth(1)" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            <div class="flex gap-2">
+              <button onclick="changeMonth(-1)" class="p-1.5 border border-slate-200 rounded-lg hover:bg-slate-50"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+              <button onclick="changeMonth(1)" class="p-1.5 border border-slate-200 rounded-lg hover:bg-slate-50"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
             </div>
           </div>
           <div class="grid grid-cols-7 gap-1 text-center font-semibold text-[11px] text-slate-400 mb-2">
@@ -232,84 +181,63 @@
       </div>
     </section>
 
-    <!-- TAB 3: MOM SHEETS -->
+    <!-- 3. MOM SHEETS -->
     <section id="tab-mom" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Minutes of Meeting (MOM)</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Formal corporate meeting sheets with custom headers and footers</p>
+          <p class="text-xs text-slate-500">Corporate meeting sheets with custom headers and footers</p>
         </div>
-        <button onclick="openModal('mom-modal')" class="inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
+        <button onclick="openModal('mom-modal')" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
           <i data-lucide="file-plus" class="w-4 h-4"></i> New MOM Document
         </button>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="mom-cards-grid">
-        <div class="col-span-full p-8 text-center text-slate-400 text-sm">No MOM sheets available. Click "+ New MOM Document" to create.</div>
+        <div class="col-span-full p-8 text-center text-slate-400 text-sm">No MOM sheets recorded. Click "+ New MOM Document" to start.</div>
       </div>
     </section>
 
-    <!-- TAB 4: COMPANY NOTEPAD -->
+    <!-- 4. COMPANY NOTEPAD -->
     <section id="tab-notepad" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Agieshealthfirst Company Notepad</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Central team scratchpad for protocols, updates, and draft ideas</p>
+          <p class="text-xs text-slate-500">Shared notepad for operational protocols and quick sync notes</p>
         </div>
-        <button onclick="saveNotepadContent()" id="notepad-save-btn" class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
-          <i data-lucide="save" class="w-4 h-4"></i> Save to Cloud Sheet
+        <button onclick="saveNotepadContent()" id="notepad-save-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
+          <i data-lucide="save" class="w-4 h-4"></i> Save to Cloud
         </button>
       </div>
-
-      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <input type="text" id="note-title" placeholder="Protocol / Note Title..." class="text-lg font-bold text-slate-800 focus:outline-none w-full" value="General Clinical & Operations Board">
-          <span id="note-last-updated" class="text-[11px] text-slate-400 whitespace-nowrap pl-2">Ready</span>
+          <input type="text" id="note-title" placeholder="Note Title..." class="text-lg font-bold text-slate-800 focus:outline-none w-full" value="General Clinical & Operations Board">
+          <span id="note-last-updated" class="text-[11px] text-slate-400 whitespace-nowrap pl-2">Synced</span>
         </div>
-        <textarea id="note-content" rows="16" placeholder="Start typing shared company notes, clinical points, or tasks for partners..."
-          class="w-full text-sm text-slate-700 border-0 focus:ring-0 focus:outline-none resize-none leading-relaxed font-mono custom-scrollbar"></textarea>
+        <textarea id="note-content" rows="15" placeholder="Write shared protocols, reminders, or agendas here..."
+          class="w-full text-sm text-slate-700 border-0 focus:outline-none resize-none leading-relaxed font-mono custom-scrollbar"></textarea>
       </div>
     </section>
 
-    <!-- TAB 5: DEVELOPER & USER ACCESS -->
+    <!-- 5. DEVELOPER -->
     <section id="tab-developer" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Developer & Team Access Panel</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Create login credentials for your partners and manage system permissions</p>
+          <p class="text-xs text-slate-500">Authorize and provision accounts for other partners</p>
         </div>
-        <button onclick="openModal('user-modal')" class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95 cursor-pointer">
-          <i data-lucide="user-plus" class="w-4 h-4"></i> Provision Partner Access
+        <button onclick="openModal('user-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
+          <i data-lucide="user-plus" class="w-4 h-4"></i> Add Partner Login
         </button>
       </div>
-
-      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
-        <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Authorized Team Credentials</span>
-          <span class="text-xs text-slate-400">Stored in Google Sheets ('Users' tab)</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
-              <tr>
-                <th class="p-3.5">Name</th>
-                <th class="p-3.5">Login ID</th>
-                <th class="p-3.5">Password</th>
-                <th class="p-3.5">Role</th>
-                <th class="p-3.5">Status</th>
-              </tr>
-            </thead>
-            <tbody id="users-table-body" class="divide-y divide-slate-100">
-              <tr class="hover:bg-slate-50 transition">
-                <td class="p-3.5 font-bold text-slate-800">Administrator</td>
-                <td class="p-3.5 font-mono text-teal-700 font-bold">AHF007</td>
-                <td class="p-3.5 font-mono text-slate-500">Sumedh</td>
-                <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-700">Admin</span></td>
-                <td class="p-3.5"><span class="inline-flex items-center gap-1 text-emerald-600 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
+            <tr><th class="p-3.5">Name</th><th class="p-3.5">Login ID</th><th class="p-3.5">Password</th><th class="p-3.5">Role</th><th class="p-3.5">Status</th></tr>
+          </thead>
+          <tbody id="users-table-body" class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50"><td class="p-3.5 font-bold">Administrator</td><td class="p-3.5 font-mono text-teal-700 font-bold">AHF007</td><td class="p-3.5 font-mono text-slate-500">Sumedh</td><td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-700">Admin</span></td><td class="p-3.5"><span class="text-emerald-600 font-semibold">Active</span></td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -317,60 +245,33 @@
 
   <!-- ==================== MOBILE NAVIGATION ==================== -->
   <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 flex items-center justify-around py-2 z-40 shadow-lg">
-    <button onclick="switchTab('tasks')" class="nav-tab active-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-teal-600" data-target="tasks">
-      <i data-lucide="check-square" class="w-5 h-5"></i> Tasks
-    </button>
-    <button onclick="switchTab('calendar')" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="calendar">
-      <i data-lucide="calendar" class="w-5 h-5"></i> Calendar
-    </button>
-    <button onclick="switchTab('mom')" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="mom">
-      <i data-lucide="file-text" class="w-5 h-5"></i> MOM
-    </button>
-    <button onclick="switchTab('notepad')" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="notepad">
-      <i data-lucide="edit-3" class="w-5 h-5"></i> Notes
-    </button>
-    <button onclick="switchTab('developer')" id="dev-tab-mobile" class="nav-tab flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="developer">
-      <i data-lucide="shield-check" class="w-5 h-5"></i> Admin
-    </button>
+    <button onclick="switchTab('tasks')" class="flex flex-col items-center gap-1 text-[10px] font-semibold text-teal-600" data-target="tasks"><i data-lucide="check-square" class="w-5 h-5"></i> Tasks</button>
+    <button onclick="switchTab('calendar')" class="flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="calendar"><i data-lucide="calendar" class="w-5 h-5"></i> Calendar</button>
+    <button onclick="switchTab('mom')" class="flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="mom"><i data-lucide="file-text" class="w-5 h-5"></i> MOM</button>
+    <button onclick="switchTab('notepad')" class="flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="notepad"><i data-lucide="edit-3" class="w-5 h-5"></i> Notes</button>
+    <button onclick="switchTab('developer')" class="flex flex-col items-center gap-1 text-[10px] font-semibold text-slate-500" data-target="developer"><i data-lucide="shield-check" class="w-5 h-5"></i> Admin</button>
   </nav>
 
   <!-- ==================== MODALS ==================== -->
-
   <!-- 1. Task Modal -->
   <div id="task-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
-        <h3 class="text-base font-bold text-slate-900">Create New Checklist Task</h3>
-        <button onclick="closeModal('task-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="text-base font-bold text-slate-900">Create Task</h3>
+        <button onclick="closeModal('task-modal')"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
       </div>
-      <form id="task-form" onsubmit="handleAddTask(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Task Title / Action Item</label>
-          <input type="text" id="task-title-input" required placeholder="e.g. Clinical protocol review" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
-        </div>
+      <div class="space-y-3">
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Task Title</label><input type="text" id="task-title-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500"></div>
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Priority</label>
-            <select id="task-priority-input" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
-              <option value="High">High</option>
-              <option value="Medium" selected>Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Due Date</label>
-            <input type="date" id="task-date-input" required class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
-          </div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Priority</label><select id="task-priority-input" class="w-full px-3 py-2 border rounded-xl text-xs"><option value="High">High</option><option value="Medium" selected>Medium</option><option value="Low">Low</option></select></div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Due Date</label><input type="date" id="task-date-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Assign Partner</label>
-          <input type="text" id="task-assigned-input" placeholder="e.g. Partner Name / Sumedh" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Assign To</label><input type="text" id="task-assigned-input" placeholder="e.g. Sumedh" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="closeModal('task-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600">Cancel</button>
+          <button onclick="submitTask()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-semibold">Save Task</button>
         </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeModal('task-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold">Save Task</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -378,33 +279,21 @@
   <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
-        <h3 class="text-base font-bold text-slate-900">Schedule Calendar Event</h3>
-        <button onclick="closeModal('calendar-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="text-base font-bold text-slate-900">Schedule Event</h3>
+        <button onclick="closeModal('calendar-modal')"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
       </div>
-      <form id="calendar-form" onsubmit="handleAddEvent(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Event / Meeting Title</label>
-          <input type="text" id="cal-title-input" required placeholder="e.g. Partner Strategy Discussion" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
-        </div>
+      <div class="space-y-3">
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Title</label><input type="text" id="cal-title-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
-            <input type="date" id="cal-date-input" required class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Time</label>
-            <input type="time" id="cal-time-input" required class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none">
-          </div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Date</label><input type="date" id="cal-date-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Time</label><input type="time" id="cal-time-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Description / Notes</label>
-          <textarea id="cal-desc-input" rows="3" placeholder="Meeting details or agenda points..." class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:outline-none"></textarea>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Description</label><textarea id="cal-desc-input" rows="2" class="w-full px-3 py-2 border rounded-xl text-xs"></textarea></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="closeModal('calendar-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600">Cancel</button>
+          <button onclick="submitCalendarEvent()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-semibold">Schedule</button>
         </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeModal('calendar-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold">Schedule Event</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -412,112 +301,58 @@
   <div id="mom-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-xl space-y-4 custom-scrollbar">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
-        <h3 class="text-base font-bold text-slate-900">Create Minutes of Meeting (MOM) Sheet</h3>
-        <button onclick="closeModal('mom-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="text-base font-bold text-slate-900">New MOM Sheet</h3>
+        <button onclick="closeModal('mom-modal')"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
       </div>
-      <form id="mom-form" onsubmit="handleAddMOM(event)" class="space-y-4">
-        <div class="p-3 bg-teal-50/50 rounded-xl border border-teal-100">
-          <label class="block text-[11px] font-bold text-teal-800 uppercase tracking-wider mb-1">Company Document Header Note</label>
-          <input type="text" id="mom-header-input" value="Agieshealthfirst Internal Healthcare Governance & Operations Record" class="w-full px-3 py-1.5 border border-teal-200 rounded-lg text-xs bg-white focus:outline-none">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Title</label>
-          <input type="text" id="mom-title-input" required placeholder="e.g. Q4 Healthcare Strategy" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-        </div>
-
+      <div class="space-y-3">
+        <div><label class="block text-[11px] font-bold text-teal-800 uppercase mb-1">Header Note</label><input type="text" id="mom-header-input" value="Agieshealthfirst Internal Governance & Operations Record" class="w-full px-3 py-1.5 border border-teal-200 rounded-lg text-xs"></div>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Title</label><input type="text" id="mom-title-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Date</label>
-            <input type="date" id="mom-date-input" required class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Time</label>
-            <input type="time" id="mom-time-input" required class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-          </div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Date</label><input type="date" id="mom-date-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Time</label><input type="time" id="mom-time-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
         </div>
-
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Chair</label>
-            <input type="text" id="mom-chair-input" placeholder="e.g. Dr. A. Dindore" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Attendees</label>
-            <input type="text" id="mom-attendees-input" placeholder="e.g. Sumedh, Rahul, Onkar" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-          </div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Chair</label><input type="text" id="mom-chair-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
+          <div><label class="block text-xs font-semibold text-slate-600 mb-1">Attendees</label><input type="text" id="mom-attendees-input" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
         </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Agenda</label>
-          <textarea id="mom-agenda-input" rows="2" placeholder="List key agenda topics..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none"></textarea>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Agenda</label><textarea id="mom-agenda-input" rows="2" class="w-full px-3 py-2 border rounded-xl text-xs"></textarea></div>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Discussions</label><textarea id="mom-discuss-input" rows="3" class="w-full px-3 py-2 border rounded-xl text-xs"></textarea></div>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Action Items</label><textarea id="mom-action-input" rows="2" class="w-full px-3 py-2 border rounded-xl text-xs"></textarea></div>
+        <div><label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Footer Note</label><input type="text" id="mom-footer-input" value="Confidential — Proprietary to Agieshealthfirst Partners." class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs"></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="closeModal('mom-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600">Cancel</button>
+          <button onclick="submitMOM()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-semibold">Save Sheet</button>
         </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Discussions & Notes</label>
-          <textarea id="mom-discuss-input" rows="3" placeholder="Summary of deliberations..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none"></textarea>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Action Items / Decisions</label>
-          <textarea id="mom-action-input" rows="2" placeholder="Responsible persons and targets..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none"></textarea>
-        </div>
-
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Custom Document Footer Note</label>
-          <input type="text" id="mom-footer-input" value="Confidential — Proprietary to Agieshealthfirst Partners. All rights reserved." class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:outline-none">
-        </div>
-
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeModal('mom-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold">Save MOM Sheet</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
-  <!-- 4. Provision User Modal -->
+  <!-- 4. User Provisioning Modal -->
   <div id="user-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
-        <h3 class="text-base font-bold text-slate-900">Add Partner / User Credentials</h3>
-        <button onclick="closeModal('user-modal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="text-base font-bold text-slate-900">Add Partner Account</h3>
+        <button onclick="closeModal('user-modal')"><i data-lucide="x" class="w-5 h-5 text-slate-400"></i></button>
       </div>
-      <form id="user-form" onsubmit="handleAddUser(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Partner Full Name</label>
-          <input type="text" id="new-user-name" required placeholder="e.g. Sumedh K." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+      <div class="space-y-3">
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label><input type="text" id="new-user-name" placeholder="e.g. Partner" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Login ID</label><input type="text" id="new-user-id" placeholder="e.g. AHF008" class="w-full px-3 py-2 border rounded-xl text-xs uppercase font-medium"></div>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Password</label><input type="text" id="new-user-pass" placeholder="Password" class="w-full px-3 py-2 border rounded-xl text-xs"></div>
+        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Role</label><select id="new-user-role" class="w-full px-3 py-2 border rounded-xl text-xs"><option value="Partner" selected>Partner</option><option value="Admin">Admin</option></select></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="closeModal('user-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600">Cancel</button>
+          <button onclick="submitUser()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Add Account</button>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Login ID</label>
-          <input type="text" id="new-user-id" required placeholder="e.g. AHF008" class="w-full px-3 py-2 border rounded-xl text-xs uppercase focus:outline-none font-medium">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
-          <input type="text" id="new-user-pass" required placeholder="Assign password" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Role</label>
-          <select id="new-user-role" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
-            <option value="Partner" selected>Partner (Edit & View All)</option>
-            <option value="Admin">Admin (Full Control)</option>
-          </select>
-        </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeModal('user-modal')" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold">Grant Access</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
   <div id="print-mom-area" class="hidden"></div>
 
-  <!-- ==================== JAVASCRIPT ==================== -->
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwuJPSlrr6IiKJkPb8QFqm-sB55N9KRp3mMNA9Gklo02QepsvhofC-BDa1r_7Rggo0/exec";
 
-    let currentUser = null;
     let cachedTasks = [];
     let cachedEvents = [];
     let cachedMOM = [];
@@ -525,109 +360,54 @@
     let currentTaskFilter = 'all';
     let calendarDate = new Date();
 
-    const DEFAULT_ADMIN = {
-      "Login ID": "AHF007",
-      "Password": "Sumedh",
-      "Name": "Administrator",
-      "Role": "Admin",
-      "Status": "Active"
-    };
-
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      checkExistingSession();
+      if (sessionStorage.getItem('agies_unlocked') === 'true') {
+        hideAuthModal();
+        fetchAllData();
+      }
     });
 
-    function checkExistingSession() {
-      const savedUser = sessionStorage.getItem('ahf_user');
-      if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        unlockApp(currentUser);
-      }
-    }
-
-    function unlockApp(user) {
-      document.getElementById('auth-modal').style.display = 'none';
-      document.getElementById('current-user-display').textContent = user.Name || user["Login ID"];
-      document.getElementById('current-role-badge').textContent = user.Role;
-      if (user.Role !== 'Admin') {
-        document.getElementById('dev-tab-btn')?.classList.add('hidden');
-        document.getElementById('dev-tab-mobile')?.classList.add('hidden');
-      }
+    // GUARANTEED UNLOCK FUNCTION (Direct DOM style override)
+    function forceUnlock() {
+      const modal = document.getElementById('auth-modal');
+      modal.style.setProperty('display', 'none', 'important');
+      sessionStorage.setItem('agies_unlocked', 'true');
       fetchAllData();
     }
 
-    // DIRECT CLICK LOGIN FUNCTION
-    function doLogin() {
-      const loginId = (document.getElementById('login-id').value || '').trim().toUpperCase();
-      const pass = (document.getElementById('login-pass').value || '').trim();
-      const errBox = document.getElementById('login-error');
-
-      errBox.classList.add('hidden');
-
-      // 1. FAST MATCH FOR DEFAULT CREDENTIALS
-      if (loginId === "AHF007" && pass === "Sumedh") {
-        currentUser = DEFAULT_ADMIN;
-        sessionStorage.setItem('ahf_user', JSON.stringify(DEFAULT_ADMIN));
-        unlockApp(DEFAULT_ADMIN);
-        return;
-      }
-
-      // 2. CHECK CUSTOM CREDENTIALS
-      const matched = (cachedUsers || []).find(u => 
-        String(u["Login ID"]).trim().toUpperCase() === loginId && 
-        String(u["Password"]).trim() === pass
-      );
-
-      if (matched) {
-        currentUser = matched;
-        sessionStorage.setItem('ahf_user', JSON.stringify(matched));
-        unlockApp(matched);
-      } else {
-        errBox.textContent = "Invalid Login ID or Password. Default is AHF007 / Sumedh";
-        errBox.classList.remove('hidden');
-      }
+    function hideAuthModal() {
+      const modal = document.getElementById('auth-modal');
+      modal.style.setProperty('display', 'none', 'important');
     }
 
-    function logout() {
-      sessionStorage.removeItem('ahf_user');
+    function reLockApp() {
+      sessionStorage.removeItem('agies_unlocked');
       location.reload();
     }
 
-    // API WRAPPERS
+    // SHEETS API CALLS
     async function apiGet(sheetName) {
-      setSyncStatus("Syncing...");
       try {
         const res = await fetch(`${API_URL}?sheet=${encodeURIComponent(sheetName)}`);
         const json = await res.json();
-        setSyncStatus("Live Sync Connected");
         return Array.isArray(json) ? json : [];
       } catch (e) {
-        setSyncStatus("Offline / Cached");
         return [];
       }
     }
 
     async function apiPost(payload) {
-      setSyncStatus("Saving to Sheet...");
       try {
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
-        const json = await res.json();
-        setSyncStatus("Saved");
-        return json;
+        return await res.json();
       } catch (e) {
-        setSyncStatus("Saved locally");
         return { status: "cached" };
       }
-    }
-
-    function setSyncStatus(txt) {
-      const el = document.getElementById('sync-status');
-      if (el) el.textContent = txt;
     }
 
     async function fetchAllData() {
@@ -638,10 +418,355 @@
       fetchUsers();
     }
 
-    function fetchCurrentTabData(spin = false) {
-      if (spin) {
-        const icon = document.getElementById('refresh-icon');
-        icon.classList.add('animate-spin');
-        setTimeout(() => icon.classList.remove('animate-spin'), 1000);
+    // CHECKLIST LOGIC
+    async function fetchTasks() {
+      const remote = await apiGet("Tasks");
+      if (remote && remote.length > 0) cachedTasks = remote;
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-list');
+      if (!cachedTasks || cachedTasks.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">No tasks found. Click "+ Add Task" to begin.</div>`;
+        updateTaskCounters();
+        return;
       }
-      fetchAllData();
+
+      const filtered = cachedTasks.filter(t => {
+        if (currentTaskFilter === 'Pending') return t.Status !== 'Done';
+        if (currentTaskFilter === 'Done') return t.Status === 'Done';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">No ${currentTaskFilter} tasks.</div>`;
+        updateTaskCounters();
+        return;
+      }
+
+      container.innerHTML = filtered.map(t => {
+        const isDone = t.Status === 'Done';
+        return `
+          <div class="p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition ${isDone ? 'bg-slate-50/50' : ''}">
+            <div class="flex items-center gap-3">
+              <button onclick="toggleTaskStatus('${t['Task ID']}', '${t.Status}')" class="w-6 h-6 rounded-lg border flex items-center justify-center cursor-pointer ${isDone ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 hover:border-teal-500'}">
+                ${isDone ? '<i data-lucide="check" class="w-4 h-4"></i>' : ''}
+              </button>
+              <div>
+                <p class="text-xs font-semibold text-slate-800 ${isDone ? 'line-through text-slate-400' : ''}">${escapeHtml(t.Title)}</p>
+                <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">${t.Priority}</span>
+                  <span>Due: ${t['Due Date'] || 'N/A'}</span>
+                  <span>• Assigned: <strong class="text-slate-600">${escapeHtml(t['Assigned To'] || 'Anyone')}</strong></span>
+                </div>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400">By ${escapeHtml(t['Created By'] || 'Admin')}</span>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+      updateTaskCounters();
+    }
+
+    function updateTaskCounters() {
+      document.getElementById('count-total').textContent = cachedTasks.length;
+      document.getElementById('count-pending').textContent = cachedTasks.filter(t => t.Status !== 'Done').length;
+      document.getElementById('count-completed').textContent = cachedTasks.filter(t => t.Status === 'Done').length;
+      document.getElementById('count-high').textContent = cachedTasks.filter(t => t.Priority === 'High' && t.Status !== 'Done').length;
+    }
+
+    function filterTasks(f) {
+      currentTaskFilter = f;
+      renderTasks();
+    }
+
+    async function toggleTaskStatus(id, currentStatus) {
+      const newStatus = currentStatus === 'Done' ? 'Pending' : 'Done';
+      const target = cachedTasks.find(t => String(t['Task ID']) === String(id));
+      if (target) target.Status = newStatus;
+      renderTasks();
+      await apiPost({ sheet: "Tasks", action: "update", id: id, data: { Status: newStatus } });
+      fetchTasks();
+    }
+
+    function submitTask() {
+      const taskData = {
+        "Task ID": "TSK-" + Date.now().toString().slice(-6),
+        "Title": document.getElementById('task-title-input').value,
+        "Priority": document.getElementById('task-priority-input').value,
+        "Due Date": document.getElementById('task-date-input').value,
+        "Assigned To": document.getElementById('task-assigned-input').value || "Sumedh",
+        "Status": "Pending",
+        "Created By": "Admin",
+        "Created At": new Date().toISOString().split('T')[0]
+      };
+      if (!taskData.Title) return;
+
+      cachedTasks.unshift(taskData);
+      renderTasks();
+      closeModal('task-modal');
+      apiPost({ sheet: "Tasks", action: "add", data: taskData }).then(fetchTasks);
+    }
+
+    // CALENDAR LOGIC
+    async function fetchCalendar() {
+      const remote = await apiGet("Calendar");
+      if (remote && remote.length > 0) cachedEvents = remote;
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const listEl = document.getElementById('events-list');
+      if (!cachedEvents || cachedEvents.length === 0) {
+        listEl.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">No events. Click "Schedule Event" above.</div>`;
+      } else {
+        listEl.innerHTML = cachedEvents.map(ev => `
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-800">${escapeHtml(ev.Title)}</h4>
+              <span class="text-[10px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">${ev.Time || ''}</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">${escapeHtml(ev.Description || 'No description')}</p>
+            <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+              <span>📅 ${ev.Date}</span>
+              <span>By ${escapeHtml(ev['Created By'] || 'Admin')}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const grid = document.getElementById('calendar-days-grid');
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+      document.getElementById('current-month-label').textContent = calendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+
+      let cells = '';
+      for (let i = 0; i < firstDay; i++) {
+        cells += `<div class="h-20 bg-slate-50/50 rounded-lg p-1"></div>`;
+      }
+
+      for (let d = 1; d <= totalDays; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dayEvents = cachedEvents.filter(e => e.Date === dateStr);
+
+        cells += `
+          <div class="h-20 bg-white border border-slate-100 rounded-lg p-1 flex flex-col justify-between">
+            <span class="text-[11px] font-semibold text-slate-700">${d}</span>
+            <div class="space-y-0.5 overflow-hidden">
+              ${dayEvents.slice(0, 2).map(e => `
+                <div class="bg-teal-50 text-teal-800 text-[9px] px-1 py-0.5 rounded truncate font-medium">
+                  ${escapeHtml(e.Title)}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      grid.innerHTML = cells;
+    }
+
+    function changeMonth(d) {
+      calendarDate.setMonth(calendarDate.getMonth() + d);
+      renderCalendar();
+    }
+
+    function submitCalendarEvent() {
+      const evData = {
+        "Event ID": "EVT-" + Date.now().toString().slice(-6),
+        "Title": document.getElementById('cal-title-input').value,
+        "Date": document.getElementById('cal-date-input').value,
+        "Time": document.getElementById('cal-time-input').value,
+        "Description": document.getElementById('cal-desc-input').value,
+        "Created By": "Admin"
+      };
+      if (!evData.Title) return;
+
+      cachedEvents.push(evData);
+      renderCalendar();
+      closeModal('calendar-modal');
+      apiPost({ sheet: "Calendar", action: "add", data: evData }).then(fetchCalendar);
+    }
+
+    // MOM LOGIC
+    async function fetchMOM() {
+      const remote = await apiGet("MOM");
+      if (remote && remote.length > 0) cachedMOM = remote;
+      renderMOM();
+    }
+
+    function renderMOM() {
+      const container = document.getElementById('mom-cards-grid');
+      if (!cachedMOM || cachedMOM.length === 0) {
+        container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 text-sm">No MOM sheets recorded. Click "+ New MOM Document" to start.</div>`;
+        return;
+      }
+
+      container.innerHTML = cachedMOM.map(m => `
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="p-2 bg-slate-50 border border-slate-100 rounded-lg text-[10px] text-slate-500 font-medium truncate mb-2">
+              🏷️ ${escapeHtml(m['Header Note'] || 'Agieshealthfirst Internal MOM')}
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">${escapeHtml(m['Meeting Title'])}</h3>
+            <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+              <span>📅 ${m.Date || ''}</span> • <span>⏰ ${m.Time || ''}</span>
+            </div>
+            <div class="mt-3 text-xs text-slate-600 line-clamp-3">
+              <strong class="text-slate-800">Agenda:</strong> ${escapeHtml(m.Agenda || 'N/A')}
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400">Chair: ${escapeHtml(m.Chair || 'N/A')}</span>
+            <button onclick="printMOM('${m['Meeting ID']}')" class="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1 cursor-pointer">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print / PDF
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function submitMOM() {
+      const momData = {
+        "Meeting ID": "MOM-" + Date.now().toString().slice(-6),
+        "Meeting Title": document.getElementById('mom-title-input').value,
+        "Date": document.getElementById('mom-date-input').value,
+        "Time": document.getElementById('mom-time-input').value,
+        "Attendees": document.getElementById('mom-attendees-input').value,
+        "Chair": document.getElementById('mom-chair-input').value,
+        "Agenda": document.getElementById('mom-agenda-input').value,
+        "Discussions": document.getElementById('mom-discuss-input').value,
+        "Action Items": document.getElementById('mom-action-input').value,
+        "Header Note": document.getElementById('mom-header-input').value,
+        "Footer Note": document.getElementById('mom-footer-input').value,
+        "Created By": "Admin"
+      };
+      if (!momData["Meeting Title"]) return;
+
+      cachedMOM.unshift(momData);
+      renderMOM();
+      closeModal('mom-modal');
+      apiPost({ sheet: "MOM", action: "add", data: momData }).then(fetchMOM);
+    }
+
+    function printMOM(id) {
+      const m = cachedMOM.find(item => String(item['Meeting ID']) === String(id));
+      if (!m) return;
+
+      const printArea = document.getElementById('print-mom-area');
+      printArea.innerHTML = `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1e293b; max-width: 800px; margin: 0 auto; border: 1px solid #cbd5e1; padding: 40px; border-radius: 8px;">
+          <div style="border-bottom: 2px solid #0f766e; padding-bottom: 12px; margin-bottom: 20px;">
+            <p style="font-size: 11px; text-transform: uppercase; color: #0f766e; margin: 0; font-weight: bold;">${escapeHtml(m['Header Note'] || '')}</p>
+            <h1 style="font-size: 22px; margin: 6px 0 0 0;">${escapeHtml(m['Meeting Title'])}</h1>
+          </div>
+          <p style="font-size: 13px;"><strong>Date & Time:</strong> ${m.Date} at ${m.Time} | <strong>Chair:</strong> ${escapeHtml(m.Chair || 'N/A')}</p>
+          <p style="font-size: 13px;"><strong>Attendees:</strong> ${escapeHtml(m.Attendees || 'N/A')}</p>
+          <hr style="margin: 15px 0; border: 0; border-top: 1px solid #e2e8f0;" />
+          <h3 style="font-size: 14px; color: #0f766e;">Agenda</h3>
+          <p style="font-size: 13px;">${escapeHtml(m.Agenda || 'N/A')}</p>
+          <h3 style="font-size: 14px; color: #0f766e;">Discussions</h3>
+          <p style="font-size: 13px;">${escapeHtml(m.Discussions || 'N/A')}</p>
+          <h3 style="font-size: 14px; color: #0f766e;">Action Items</h3>
+          <p style="font-size: 13px;">${escapeHtml(m['Action Items'] || 'N/A')}</p>
+          <div style="border-top: 1px solid #cbd5e1; padding-top: 15px; margin-top: 30px; font-size: 11px; color: #64748b; text-align: center;">
+            <p>${escapeHtml(m['Footer Note'] || '')}</p>
+          </div>
+        </div>
+      `;
+      window.print();
+    }
+
+    // NOTEPAD LOGIC
+    async function fetchNotepad() {
+      const notes = await apiGet("Notepad");
+      if (notes && notes.length > 0) {
+        document.getElementById('note-title').value = notes[0].Title || 'General Clinical & Operations Board';
+        document.getElementById('note-content').value = notes[0].Content || '';
+      }
+    }
+
+    async function saveNotepadContent() {
+      const title = document.getElementById('note-title').value;
+      const content = document.getElementById('note-content').value;
+      const btn = document.getElementById('notepad-save-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<span>Saving...</span>`;
+
+      await apiPost({
+        sheet: "Notepad",
+        action: "update",
+        id: "NOTE-1",
+        data: { Title: title, Content: content, "Last Updated By": "Admin", "Last Updated At": new Date().toLocaleString() }
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Save to Cloud`;
+      document.getElementById('note-last-updated').textContent = `Saved at ${new Date().toLocaleTimeString()}`;
+      lucide.createIcons();
+    }
+
+    // USERS
+    async function fetchUsers() {
+      const remote = await apiGet("Users");
+      if (remote && remote.length > 0) cachedUsers = remote;
+      const tbody = document.getElementById('users-table-body');
+      if (cachedUsers.length > 0) {
+        tbody.innerHTML = cachedUsers.map(u => `
+          <tr class="hover:bg-slate-50">
+            <td class="p-3.5 font-bold">${escapeHtml(u.Name || 'Partner')}</td>
+            <td class="p-3.5 font-mono text-teal-700 font-bold">${escapeHtml(u['Login ID'])}</td>
+            <td class="p-3.5 font-mono text-slate-500">${escapeHtml(u.Password)}</td>
+            <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">${u.Role}</span></td>
+            <td class="p-3.5"><span class="text-emerald-600 font-semibold">Active</span></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function submitUser() {
+      const userData = {
+        "Login ID": document.getElementById('new-user-id').value.trim().toUpperCase(),
+        "Password": document.getElementById('new-user-pass').value.trim(),
+        "Name": document.getElementById('new-user-name').value.trim(),
+        "Role": document.getElementById('new-user-role').value,
+        "Status": "Active"
+      };
+      if (!userData["Login ID"]) return;
+      cachedUsers.push(userData);
+      fetchUsers();
+      closeModal('user-modal');
+      apiPost({ sheet: "Users", action: "add", data: userData }).then(fetchUsers);
+    }
+
+    // TABS
+    function switchTab(tabId) {
+      document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+      const activeSec = document.getElementById(`tab-${tabId}`);
+      if (activeSec) activeSec.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        if (b.dataset.target === tabId) {
+          b.className = 'nav-tab active-tab px-4 py-2 rounded-lg text-xs font-semibold bg-white text-teal-700 shadow-2xs flex items-center gap-2';
+        } else {
+          b.className = 'nav-tab px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-2';
+        }
+      });
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
